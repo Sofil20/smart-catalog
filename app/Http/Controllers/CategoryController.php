@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CategoriesExport;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CategoryController extends Controller
 {
@@ -71,5 +73,16 @@ class CategoryController extends Controller
         $category->delete();
 
         return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus.');
+    }
+
+    public function export()
+    {
+        $isAdmin = auth()->user()->role === 'admin';
+        $fileName = 'kategori_' . date('d-m-Y_H-i-s') . '.xlsx';
+        
+        return Excel::download(
+            new CategoriesExport(auth()->id(), $isAdmin),
+            $fileName
+        );
     }
 }

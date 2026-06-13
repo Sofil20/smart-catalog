@@ -6,9 +6,14 @@
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h3 class="card-title">Daftar Kategori</h3>
-            <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm">
-                <i class="fas fa-plus"></i> Tambah Kategori
-            </a>
+            <div>
+                <a href="{{ route('categories.create') }}" class="btn btn-primary btn-sm">
+                    <i class="fas fa-plus"></i> Tambah Kategori
+                </a>
+                <a href="{{ route('categories.export') }}" class="btn btn-success btn-sm ms-2">
+                    <i class="fas fa-file-excel"></i> Export Excel
+                </a>
+            </div>
         </div>
         <div class="card-body">
             @if(session('success'))
