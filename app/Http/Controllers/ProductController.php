@@ -33,6 +33,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required|exists:categories,id',
         ], [
@@ -47,6 +48,7 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
+            'stock' => $request->stock,
             'image' => $imagePath,
             'category_id' => $request->category_id,
             'user_id' => auth()->id(),
@@ -78,6 +80,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'price' => 'required|numeric|min:0',
+            'stock' => 'required|integer|min:0',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'category_id' => 'required|exists:categories,id',
         ], [
@@ -85,7 +88,7 @@ class ProductController extends Controller
             'image.mimes' => 'Format gambar harus jpeg, png, jpg, atau gif',
         ]);
 
-        $data = $request->only(['name', 'description', 'price', 'category_id']);
+        $data = $request->only(['name', 'description', 'price', 'stock', 'category_id']);
 
         if ($request->hasFile('image')) {
             // Hapus gambar lama
@@ -100,13 +103,23 @@ class ProductController extends Controller
 
     public function destroy(Product $product)
     {
-        if (auth()->user()->role !== 'admin' && $product->user_id !== auth()->id()) {
-            abort(403);
+        if ($product->stock > 0) {
+
+            return redirect()
+                ->route('products.index')
+                ->with(
+                    'error',
+                    'Produk tidak dapat dihapus karena stok masih tersedia.'
+                );
         }
 
-        Storage::disk('public')->delete($product->image);
         $product->delete();
 
-        return redirect()->route('products.index')->with('success', 'Produk berhasil dihapus.');
+        return redirect()
+            ->route('products.index')
+            ->with(
+                'success',
+                'Produk berhasil dihapus.'
+            );
     }
 }

@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
-    protected $fillable = ['name', 'description', 'price', 'image', 'category_id', 'user_id'];
+    protected $fillable = ['name', 'description', 'price', 'stock', 'image', 'category_id', 'user_id'];
 
     public function category()
     {
@@ -17,4 +17,13 @@ class Product extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function salesTransactions()
+    {
+        return $this->hasMany(SalesTransaction::class);
+    }
+    public function stockTransactions()
+    {
+        return $this->hasMany(StockTransaction::class);
+}
 }

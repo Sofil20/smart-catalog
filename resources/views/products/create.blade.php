@@ -32,6 +32,22 @@
                     @enderror
                 </div>
                 <div class="form-group">
+                    <label for="stock">Stock Akhir</label>
+
+                    <input
+                        type="number"
+                        name="stock"
+                        id="stock"
+                        value="{{ old('stock', 0) }}"
+                        min="0"
+                        class="form-control"
+                        required>
+
+                    @error('stock')
+                        <small class="text-danger">{{ $message }}</small>
+                    @enderror
+                </div>
+                <div class="form-group">
                     <label for="category_id">Kategori</label>
                     <select name="category_id" id="category_id" class="form-control" required>
                         <option value="">Pilih Kategori</option>

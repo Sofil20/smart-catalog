@@ -31,18 +31,68 @@
                                     @endif
                                 </div>
                                 <div class="mt-auto">
-                                    <p class="text-success font-weight-bold mb-2">Rp {{ number_format($product->price, 0, ',', '.') }}</p>
+                                    <p class="text-success font-weight-bold mb-1">
+                                        Rp {{ number_format($product->price,0,',','.') }}
+                                    </p>
+                                    @if($product->stock > 10)
+                                        <span class="badge badge-success">
+                                            Stock : {{ $product->stock }}
+                                        </span>
+                                    @elseif($product->stock > 0)
+                                        <span class="badge badge-warning">
+                                            Stock : {{ $product->stock }}
+                                        </span>
+                                    @else
+                                        <span class="badge badge-danger">
+                                            Stock Habis
+                                        </span>
+                                    @endif
                                 </div>
                             </div>
                             <div class="card-footer bg-white border-top-0">
+
                                 <div class="d-flex justify-content-between">
-                                    <a href="{{ route('products.edit', $product) }}" class="btn btn-sm btn-warning"><i class="fas fa-edit"></i> Edit</a>
-                                    <form method="POST" action="{{ route('products.destroy', $product) }}" onsubmit="return confirm('Apakah Anda yakin?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Hapus</button>
-                                    </form>
+
+                                    <a href="{{ route('products.edit', $product) }}"
+                                    class="btn btn-warning btn-sm">
+
+                                        <i class="fas fa-edit"></i>
+                                        Edit
+
+                                    </a>
+
+                                    @if($product->stock == 0)
+
+                                        <form method="POST"
+                                            action="{{ route('products.destroy', $product) }}"
+                                            onsubmit="return confirm('Yakin ingin menghapus produk ini?')">
+
+                                            @csrf
+                                            @method('DELETE')
+
+                                            <button type="submit"
+                                                    class="btn btn-danger btn-sm">
+
+                                                <i class="fas fa-trash"></i>
+                                                Hapus
+
+                                            </button>
+
+                                        </form>
+
+                                    @else
+
+                                        <button class="btn btn-secondary btn-sm" disabled>
+
+                                            <i class="fas fa-trash"></i>
+                                                Hapus
+
+                                        </button>
+
+                                    @endif
+
                                 </div>
+
                             </div>
                         </div>
                     </div>

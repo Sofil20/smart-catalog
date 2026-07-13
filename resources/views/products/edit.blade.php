@@ -32,6 +32,23 @@
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
+                    <div class="form-group">
+
+                        <label>Stock</label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            value="{{ $product->stock }}"
+                            readonly>
+
+                        <small class="text-muted">
+                            Stock dikelola otomatis melalui menu
+                            <strong>Barang Masuk</strong> dan
+                            <strong>Penjualan</strong>.
+                        </small>
+
+                    </div>
                 <div class="form-group">
                     <label for="category_id">Kategori</label>
                     <select name="category_id" id="category_id" class="form-control" required>
