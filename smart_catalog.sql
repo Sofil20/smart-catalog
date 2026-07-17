@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2026 at 03:45 AM
+-- Generation Time: Jul 18, 2026 at 06:17 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.3.30
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -151,7 +151,12 @@ INSERT INTO `migrations` (`id`, `migration`, `batch`) VALUES
 (3, '0001_01_01_000002_create_jobs_table', 1),
 (5, '2026_05_14_083923_add_role_to_users_table', 2),
 (6, '2026_05_14_142247_create_categories_table', 3),
-(7, '2026_05_14_142523_create_products_table', 4);
+(7, '2026_05_14_142523_create_products_table', 4),
+(8, '2026_07_08_151027_add_stock_to_products_table', 5),
+(9, '2026_07_08_151209_create_sales_transaction_table', 5),
+(10, '2026_07_08_151228_create_stock_transaction_table', 5),
+(11, '2026_07_12_064511_add_ending_stock_to_stock_transactions_table', 6),
+(12, '2026_07_12_070204_add_ending_stock_to_sales_transactions_table', 6);
 
 -- --------------------------------------------------------
 
@@ -176,6 +181,7 @@ CREATE TABLE `products` (
   `name` varchar(255) NOT NULL,
   `description` text DEFAULT NULL,
   `price` decimal(10,2) NOT NULL,
+  `stock` int(11) NOT NULL DEFAULT 0,
   `image` varchar(255) NOT NULL,
   `category_id` bigint(20) UNSIGNED NOT NULL,
   `user_id` bigint(20) UNSIGNED NOT NULL,
@@ -187,21 +193,64 @@ CREATE TABLE `products` (
 -- Dumping data for table `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `description`, `price`, `image`, `category_id`, `user_id`, `created_at`, `updated_at`) VALUES
-(1, 'Keripik Pisang Premium', 'Keripik pisang renyah dengan rasa original', 25000.00, 'products/SVnTTfnWn5L3D0b3v4Elr894FNfU0G3x6jXgo4He.jpg', 1, 2, '2026-05-14 08:41:39', '2026-05-14 08:41:39'),
-(2, 'Es Kopi Susu', 'Minuman kopi susu gula aren', 18000.00, 'products/FzwJrYXQt6YuaAIO3p6Vr5wFbnTBhws7ytjbUyjb.jpg', 2, 2, '2026-05-14 19:02:27', '2026-05-14 19:02:27'),
-(3, 'Speaker Bluetooth', 'Speaker portable dengan suara bass kuat', 275000.00, 'products/k9HAMkvP7ImiSmMGvf3wBBKXpqmrJWf5I0hvAIUo.jpg', 4, 2, '2026-05-14 19:04:58', '2026-05-14 19:04:58'),
-(4, 'Kaos Oversize', 'Kaos cotton combed premium', 85000.00, 'products/yccizg2QUZZTYK2sG1GRBqcw8yJarI6ebkHp6n7i.jpg', 3, 2, '2026-05-14 19:14:55', '2026-05-14 19:14:55'),
-(5, 'Tas Anyaman Rotan', 'Tas handmade berbahan rotan alami', 150000.00, 'products/S6p90nGP6zRqPgceM7fhZwPfd7Y09OrKcrx6qNzA.jpg', 5, 2, '2026-05-14 19:16:42', '2026-05-14 19:16:42'),
-(6, 'Brownies Coklat', 'Brownies lembut dengan topping coklat premium', 45000.00, 'products/7FZcq636JaeujvNq1k1nCPpjwABEzNjqu8V3fvEj.png', 6, 1, '2026-05-14 20:56:03', '2026-05-14 20:56:16'),
-(7, 'Thai Tea Original', 'Minuman thai tea segar ukuran jumbo', 22000.00, 'products/b6wYuiX3lh2oosA3YKGxQL3yqJTah2Rd5xkJ5www.jpg', 7, 1, '2026-05-14 20:57:41', '2026-05-14 20:57:41'),
-(8, 'Topi Baseball', 'Topi casual untuk pria dan wanita', 50000.00, 'products/F17xoy7410tdT4fBLPMSdNT4DgHQGWgjfL7qG8oY.jpg', 8, 1, '2026-05-14 20:59:35', '2026-05-14 20:59:35'),
-(9, 'Mouse Wireless', 'Mouse wireless rechargeable', 95000.00, 'products/1aucxNXL8bon2VvMT0ejbUFKXFLzr8BSitgtptAp.jpg', 9, 1, '2026-05-14 21:02:54', '2026-05-14 21:02:54'),
-(10, 'Keyboard Mechanical', 'Keyboard gaming RGB mechanical', 350000.00, 'products/pUj8StzcBO7Z4pueY4kxkNhnYDW2ELiastR9nXOj.jpg', 9, 1, '2026-05-14 21:04:35', '2026-05-14 21:04:35'),
-(11, 'Gelang Handmade', 'Gelang handmade motif etnik', 30000.00, 'products/Vg64uOE5WBx9fOZQZNzmBWxkIrsLvYeJQacJ0Gvx.jpg', 10, 1, '2026-05-14 21:05:56', '2026-05-14 21:05:56'),
-(12, 'Vas Bambu', 'Vas bunga dari bambu alami', 70000.00, 'products/XVoEQURwgPWklc3FyKX10eWazcfXL0xSniFVKw8P.jpg', 10, 1, '2026-05-14 21:07:14', '2026-05-14 21:07:14'),
-(13, 'Raket Badminton', 'Raket ringan untuk latihan', 175000.00, 'products/LY9NEaq7lLi39uCr1qF8A7xNeH26dLpGKgiAC5BH.jpg', 11, 1, '2026-05-14 21:08:30', '2026-05-14 21:08:30'),
-(14, 'Serum Wajah', 'Serum vitamin C glowing', 99000.00, 'products/7GDUtpUFjC2gmsGokS5CXZ2IKtXSK3oZvLBwDii1.jpg', 12, 1, '2026-05-14 21:10:49', '2026-05-14 21:10:49');
+INSERT INTO `products` (`id`, `name`, `description`, `price`, `stock`, `image`, `category_id`, `user_id`, `created_at`, `updated_at`) VALUES
+(1, 'Keripik Pisang Premium', 'Keripik pisang renyah dengan rasa original', 25000.00, 17, 'products/SVnTTfnWn5L3D0b3v4Elr894FNfU0G3x6jXgo4He.jpg', 1, 2, '2026-05-14 08:41:39', '2026-07-17 15:46:44'),
+(2, 'Es Kopi Susu', 'Minuman kopi susu gula aren', 18000.00, 50, 'products/FzwJrYXQt6YuaAIO3p6Vr5wFbnTBhws7ytjbUyjb.jpg', 2, 2, '2026-05-14 19:02:27', '2026-07-17 15:46:24'),
+(3, 'Speaker Bluetooth', 'Speaker portable dengan suara bass kuat', 275000.00, 2, 'products/k9HAMkvP7ImiSmMGvf3wBBKXpqmrJWf5I0hvAIUo.jpg', 4, 2, '2026-05-14 19:04:58', '2026-07-17 15:47:04'),
+(4, 'Kaos Oversize', 'Kaos cotton combed premium', 85000.00, 0, 'products/yccizg2QUZZTYK2sG1GRBqcw8yJarI6ebkHp6n7i.jpg', 3, 2, '2026-05-14 19:14:55', '2026-07-17 15:46:34'),
+(5, 'Tas Anyaman Rotan', 'Tas handmade berbahan rotan alami', 150000.00, 15, 'products/S6p90nGP6zRqPgceM7fhZwPfd7Y09OrKcrx6qNzA.jpg', 5, 2, '2026-05-14 19:16:42', '2026-07-17 15:47:13'),
+(6, 'Brownies Coklat', 'Brownies lembut dengan topping coklat premium', 45000.00, 85, 'products/7FZcq636JaeujvNq1k1nCPpjwABEzNjqu8V3fvEj.png', 6, 1, '2026-05-14 20:56:03', '2026-07-17 15:41:55'),
+(7, 'Thai Tea Original', 'Minuman thai tea segar ukuran jumbo', 22000.00, 0, 'products/b6wYuiX3lh2oosA3YKGxQL3yqJTah2Rd5xkJ5www.jpg', 7, 1, '2026-05-14 20:57:41', '2026-07-13 02:25:24'),
+(8, 'Topi Baseball', 'Topi casual untuk pria dan wanita', 50000.00, 0, 'products/F17xoy7410tdT4fBLPMSdNT4DgHQGWgjfL7qG8oY.jpg', 8, 1, '2026-05-14 20:59:35', '2026-07-17 15:42:45'),
+(9, 'Mouse Wireless', 'Mouse wireless rechargeable', 95000.00, 15, 'products/1aucxNXL8bon2VvMT0ejbUFKXFLzr8BSitgtptAp.jpg', 9, 1, '2026-05-14 21:02:54', '2026-07-12 22:07:55'),
+(10, 'Keyboard Mechanical', 'Keyboard gaming RGB mechanical', 350000.00, 20, 'products/pUj8StzcBO7Z4pueY4kxkNhnYDW2ELiastR9nXOj.jpg', 9, 1, '2026-05-14 21:04:35', '2026-07-17 15:42:32'),
+(11, 'Gelang Handmade', 'Gelang handmade motif etnik', 30000.00, 36, 'products/Vg64uOE5WBx9fOZQZNzmBWxkIrsLvYeJQacJ0Gvx.jpg', 10, 1, '2026-05-14 21:05:56', '2026-07-17 15:42:09'),
+(12, 'Vas Bambu', 'Vas bunga dari bambu alami', 70000.00, 3, 'products/XVoEQURwgPWklc3FyKX10eWazcfXL0xSniFVKw8P.jpg', 10, 1, '2026-05-14 21:07:14', '2026-07-17 15:42:54'),
+(13, 'Raket Badminton', 'Raket ringan untuk latihan', 175000.00, 25, 'products/LY9NEaq7lLi39uCr1qF8A7xNeH26dLpGKgiAC5BH.jpg', 11, 1, '2026-05-14 21:08:30', '2026-07-16 15:34:50'),
+(14, 'Serum Wajah', 'Serum vitamin C glowing', 99000.00, 7, 'products/7GDUtpUFjC2gmsGokS5CXZ2IKtXSK3oZvLBwDii1.jpg', 12, 1, '2026-05-14 21:10:49', '2026-07-17 15:43:11');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sales_transactions`
+--
+
+CREATE TABLE `sales_transactions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `transaction_code` varchar(255) NOT NULL,
+  `transaction_date` date NOT NULL,
+  `product_id` bigint(20) UNSIGNED NOT NULL,
+  `merchant_id` bigint(20) UNSIGNED NOT NULL,
+  `qty` int(11) NOT NULL,
+  `ending_stock` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `sales_transactions`
+--
+
+INSERT INTO `sales_transactions` (`id`, `transaction_code`, `transaction_date`, `product_id`, `merchant_id`, `qty`, `ending_stock`, `created_at`, `updated_at`) VALUES
+(2, 'TRX-20260712-0001', '2026-07-12', 6, 1, 10, 20, '2026-07-12 01:44:46', '2026-07-12 01:44:46'),
+(3, 'TRX-20260713-0002', '2026-07-13', 6, 1, 30, 90, '2026-07-12 22:03:18', '2026-07-12 22:03:18'),
+(4, 'TRX-20260713-0003', '2026-07-13', 11, 1, 28, 42, '2026-07-12 22:06:17', '2026-07-12 22:06:17'),
+(5, 'TRX-20260713-0004', '2026-07-13', 10, 1, 2, 18, '2026-07-12 22:07:20', '2026-07-12 22:07:20'),
+(6, 'TRX-20260713-0005', '2026-07-13', 9, 1, 5, 15, '2026-07-12 22:07:55', '2026-07-12 22:07:55'),
+(7, 'TRX-20260713-0006', '2026-07-13', 7, 1, 12, 0, '2026-07-13 02:25:24', '2026-07-13 02:25:24'),
+(8, 'TRX-20260716-0007', '2026-07-16', 12, 1, 2, 5, '2026-07-16 15:34:23', '2026-07-16 15:34:23'),
+(9, 'TRX-20260716-0008', '2026-07-16', 14, 1, 3, 12, '2026-07-16 15:34:36', '2026-07-16 15:34:36'),
+(10, 'TRX-20260716-0009', '2026-07-16', 13, 1, 5, 25, '2026-07-16 15:34:50', '2026-07-16 15:34:50'),
+(11, 'TRX-20260716-0010', '2026-07-16', 11, 1, 11, 31, '2026-07-16 15:35:05', '2026-07-16 15:35:05'),
+(12, 'TRX-20260716-0011', '2026-07-16', 6, 1, 15, 75, '2026-07-16 15:35:17', '2026-07-16 15:35:17'),
+(13, 'TRX-20260717-0012', '2026-07-17', 8, 1, 5, 0, '2026-07-17 15:42:45', '2026-07-17 15:42:45'),
+(14, 'TRX-20260717-0013', '2026-07-17', 12, 1, 2, 3, '2026-07-17 15:42:54', '2026-07-17 15:42:54'),
+(15, 'TRX-20260717-0014', '2026-07-17', 14, 1, 5, 7, '2026-07-17 15:43:11', '2026-07-17 15:43:11'),
+(16, 'TRX-20260717-0015', '2026-07-17', 2, 2, 50, 50, '2026-07-17 15:46:24', '2026-07-17 15:46:24'),
+(17, 'TRX-20260717-0016', '2026-07-17', 4, 2, 20, 0, '2026-07-17 15:46:34', '2026-07-17 15:46:34'),
+(18, 'TRX-20260717-0017', '2026-07-17', 1, 2, 33, 17, '2026-07-17 15:46:44', '2026-07-17 15:46:44'),
+(19, 'TRX-20260717-0018', '2026-07-17', 3, 2, 9, 2, '2026-07-17 15:47:04', '2026-07-17 15:47:04'),
+(20, 'TRX-20260717-0019', '2026-07-17', 5, 2, 3, 15, '2026-07-17 15:47:13', '2026-07-17 15:47:13');
 
 -- --------------------------------------------------------
 
@@ -223,9 +272,51 @@ CREATE TABLE `sessions` (
 --
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
-('7GMtH4kxknth2SRJq1ITZEPpzJdd4dnh7RFeRtwW', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiMkNQdlFzSkJwcXlDQWlOMDFZaVVVaW1kR1Z4R3BpQ0NLQ3RsQ25FWiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1778893745),
-('qF0mSOvXPl26v64UhEGpHHo5JYYFfvGpEHFB8NwH', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiMjJIUFFCWjZ0YTJhMHRLV2ptdE5EVExndVlxZTdSWjh3RjY2UVA2byI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mzc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9hZG1pbi9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6MTU6ImFkbWluLmRhc2hib2FyZCI7fXM6NTA6ImxvZ2luX3dlYl81OWJhMzZhZGRjMmIyZjk0MDE1ODBmMDE0YzdmNThlYTRlMzA5ODlkIjtpOjQ7fQ==', 1778827957),
-('W4LxdAzocYjT7hZ5pjrlWZSCswHj7fMK9HPprp5y', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/148.0.0.0 Safari/537.36 Edg/148.0.0.0', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiZHVLaGF5RTdjRkNlVGZnMG5raW05VmRBQXBydWFkR01KRHh4YXR2NiI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzE6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9kYXNoYm9hcmQiO3M6NToicm91dGUiO3M6OToiZGFzaGJvYXJkIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1778826837);
+('17RItxBWCZ6QmMlm3pFCfs7V6tZmqv2SWPXRGvUB', 4, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36 Edg/150.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiWmRtdThrT3JHcUJReUowck9VbWNwODdTYU0yYkpKYXNtcGZDWllUcCI7czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6MzU6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9yZXBvcnRzL3NhbGVzIjtzOjU6InJvdXRlIjtzOjEzOiJyZXBvcnRzLnNhbGVzIjt9czo1MDoibG9naW5fd2ViXzU5YmEzNmFkZGMyYjJmOTQwMTU4MGYwMTRjN2Y1OGVhNGUzMDk4OWQiO2k6NDt9', 1784330030),
+('GzvwKEJtj4YwjUv3MXhAwH5gjv5Gzvu5cux44JBK', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Code/1.129.0 Chrome/148.0.7778.280 Electron/42.6.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiY1pNUVRXb3ZtaTlaOFdWbjBNNW5QRm9rb21tRGFwMG41dHE5SEhXciI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6Mjc6Imh0dHA6Ly8xMjcuMC4wLjE6ODAwMC9sb2dpbiI7czo1OiJyb3V0ZSI7czo1OiJsb2dpbiI7fXM6NjoiX2ZsYXNoIjthOjI6e3M6Mzoib2xkIjthOjA6e31zOjM6Im5ldyI7YTowOnt9fX0=', 1784327514);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `stock_transactions`
+--
+
+CREATE TABLE `stock_transactions` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `stock_code` varchar(255) NOT NULL,
+  `stock_date` date NOT NULL,
+  `product_id` bigint(20) UNSIGNED NOT NULL,
+  `merchant_id` bigint(20) UNSIGNED NOT NULL,
+  `qty` int(11) NOT NULL,
+  `ending_stock` int(11) NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `stock_transactions`
+--
+
+INSERT INTO `stock_transactions` (`id`, `stock_code`, `stock_date`, `product_id`, `merchant_id`, `qty`, `ending_stock`, `created_at`, `updated_at`) VALUES
+(2, 'STK-20260712-0002', '2026-07-12', 6, 1, 10, 10, '2026-07-12 01:41:51', '2026-07-12 01:41:51'),
+(3, 'STK-20260712-0003', '2026-07-12', 6, 1, 20, 30, '2026-07-12 01:44:23', '2026-07-12 01:44:23'),
+(4, 'STK-20260713-0004', '2026-07-13', 6, 1, 100, 120, '2026-07-12 21:50:38', '2026-07-12 21:50:38'),
+(5, 'STK-20260713-0005', '2026-07-13', 11, 1, 70, 70, '2026-07-12 21:50:54', '2026-07-12 21:50:54'),
+(6, 'STK-20260713-0006', '2026-07-13', 10, 1, 20, 20, '2026-07-12 21:51:06', '2026-07-12 21:51:06'),
+(7, 'STK-20260713-0007', '2026-07-13', 9, 1, 20, 20, '2026-07-12 21:51:22', '2026-07-12 21:51:22'),
+(8, 'STK-20260713-0008', '2026-07-13', 13, 1, 30, 30, '2026-07-12 21:51:41', '2026-07-12 21:51:41'),
+(9, 'STK-20260713-0009', '2026-07-13', 14, 1, 15, 15, '2026-07-12 21:51:59', '2026-07-12 21:51:59'),
+(10, 'STK-20260713-0010', '2026-07-13', 7, 1, 12, 12, '2026-07-12 21:52:14', '2026-07-12 21:52:14'),
+(11, 'STK-20260713-0011', '2026-07-13', 8, 1, 5, 5, '2026-07-12 21:52:26', '2026-07-12 21:52:26'),
+(12, 'STK-20260713-0012', '2026-07-13', 12, 1, 7, 7, '2026-07-12 21:52:36', '2026-07-12 21:52:36'),
+(13, 'STK-20260717-0013', '2026-07-17', 6, 1, 10, 85, '2026-07-17 15:41:56', '2026-07-17 15:41:56'),
+(14, 'STK-20260717-0014', '2026-07-17', 11, 1, 5, 36, '2026-07-17 15:42:09', '2026-07-17 15:42:09'),
+(15, 'STK-20260717-0015', '2026-07-17', 10, 1, 2, 20, '2026-07-17 15:42:32', '2026-07-17 15:42:32'),
+(16, 'STK-20260717-0016', '2026-07-17', 2, 2, 100, 100, '2026-07-17 15:44:24', '2026-07-17 15:44:24'),
+(17, 'STK-20260717-0017', '2026-07-17', 4, 2, 20, 20, '2026-07-17 15:44:34', '2026-07-17 15:44:34'),
+(18, 'STK-20260717-0018', '2026-07-17', 1, 2, 50, 50, '2026-07-17 15:44:44', '2026-07-17 15:44:44'),
+(19, 'STK-20260717-0019', '2026-07-17', 3, 2, 11, 11, '2026-07-17 15:44:53', '2026-07-17 15:44:53'),
+(20, 'STK-20260717-0020', '2026-07-17', 5, 2, 18, 18, '2026-07-17 15:46:02', '2026-07-17 15:46:02');
 
 -- --------------------------------------------------------
 
@@ -320,12 +411,30 @@ ALTER TABLE `products`
   ADD KEY `products_user_id_foreign` (`user_id`);
 
 --
+-- Indexes for table `sales_transactions`
+--
+ALTER TABLE `sales_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `sales_transactions_transaction_code_unique` (`transaction_code`),
+  ADD KEY `sales_transactions_product_id_foreign` (`product_id`),
+  ADD KEY `sales_transactions_merchant_id_foreign` (`merchant_id`);
+
+--
 -- Indexes for table `sessions`
 --
 ALTER TABLE `sessions`
   ADD PRIMARY KEY (`id`),
   ADD KEY `sessions_user_id_index` (`user_id`),
   ADD KEY `sessions_last_activity_index` (`last_activity`);
+
+--
+-- Indexes for table `stock_transactions`
+--
+ALTER TABLE `stock_transactions`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `stock_transactions_stock_code_unique` (`stock_code`),
+  ADD KEY `stock_transactions_product_id_foreign` (`product_id`),
+  ADD KEY `stock_transactions_merchant_id_foreign` (`merchant_id`);
 
 --
 -- Indexes for table `users`
@@ -360,13 +469,25 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `migrations`
 --
 ALTER TABLE `migrations`
-  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(10) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `products`
 --
 ALTER TABLE `products`
   MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+
+--
+-- AUTO_INCREMENT for table `sales_transactions`
+--
+ALTER TABLE `sales_transactions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
+
+--
+-- AUTO_INCREMENT for table `stock_transactions`
+--
+ALTER TABLE `stock_transactions`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT for table `users`
@@ -390,6 +511,20 @@ ALTER TABLE `categories`
 ALTER TABLE `products`
   ADD CONSTRAINT `products_category_id_foreign` FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE CASCADE,
   ADD CONSTRAINT `products_user_id_foreign` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `sales_transactions`
+--
+ALTER TABLE `sales_transactions`
+  ADD CONSTRAINT `sales_transactions_merchant_id_foreign` FOREIGN KEY (`merchant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `sales_transactions_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `stock_transactions`
+--
+ALTER TABLE `stock_transactions`
+  ADD CONSTRAINT `stock_transactions_merchant_id_foreign` FOREIGN KEY (`merchant_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `stock_transactions_product_id_foreign` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

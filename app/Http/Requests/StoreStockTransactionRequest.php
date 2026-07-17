@@ -15,7 +15,7 @@ class StoreStockTransactionRequest extends FormRequest
     {
         return [
             'product_id' => 'required|exists:products,id',
-            'qty' => 'required|integer|min:1',
+            'qty' => 'required|integer|min:1|max:9999999999',
         ];
     }
 

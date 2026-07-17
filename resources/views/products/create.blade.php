@@ -12,21 +12,21 @@
                 @csrf
                 <div class="form-group">
                     <label for="name">Nama Produk</label>
-                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control" required>
+                    <input type="text" name="name" id="name" value="{{ old('name') }}" class="form-control" maxlength="50" required>
                     @error('name')
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="form-group">
                     <label for="description">Deskripsi</label>
-                    <textarea name="description" id="description" rows="3" class="form-control">{{ old('description') }}</textarea>
+                    <textarea name="description" id="description" rows="3" class="form-control" maxlength="300" >{{ old('description') }}</textarea>
                     @error('description')
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
                 </div>
                 <div class="form-group">
                     <label for="price">Harga</label>
-                    <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01" class="form-control" required>
+                    <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01" class="form-control" min="0" max="9999999999" required>
                     @error('price')
                         <small class="text-danger">{{ $message }}</small>
                     @enderror
@@ -40,6 +40,7 @@
                         id="stock"
                         value="{{ old('stock', 0) }}"
                         min="0"
+                        max="9999999999"
                         class="form-control"
                         required>
 

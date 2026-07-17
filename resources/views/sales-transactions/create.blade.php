@@ -80,6 +80,7 @@
                     class="form-control"
                     value="{{ old('qty') }}"
                     min="1"
+                    max="9999999999"
                     placeholder="Masukkan jumlah produk"
                     required>
 
